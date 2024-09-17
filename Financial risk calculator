@@ -1,0 +1,113 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(FinancialRiskCalculatorApp());
+}
+
+class FinancialRiskCalculatorApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Financial risk calculator',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: RiskCalculatorHomePage(),
+    );
+  }
+}
+
+class RiskCalculatorHomePage extends StatefulWidget {
+  @override
+  _RiskCalculatorHomePageState createState() => _RiskCalculatorHomePageState();
+}
+
+class _RiskCalculatorHomePageState extends State<RiskCalculatorHomePage> {
+  final _incomeController = TextEditingController();
+  final _expensesController = TextEditingController();
+  final _savingsController = TextEditingController();
+  final _debtsController = TextEditingController();
+  String _result = '';
+
+  void _calculateRisk() {
+    final double? income = double.tryParse(_incomeController.text);
+    final double? expenses = double.tryParse(_expensesController.text);
+    final double? savings = double.tryParse(_savingsController.text);
+    final double? debts = double.tryParse(_debtsController.text);
+
+    if (income != null && expenses != null && savings != null && debts != null) {
+      double riskScore = 0;
+
+      // Simple risk assessment
+      if (expenses > income) {
+        riskScore += 2; // High risk if expenses are greater than income
+      }
+      if (savings < 3 * expenses) {
+        riskScore += 1; // Moderate risk if savings are insufficient
+      }
+      if (debts > 0) {
+        riskScore += 2; // High risk if there are debts
+      }
+
+      if (riskScore >= 4) {
+        _result = 'High financial risk';
+      } else if (riskScore == 3) {
+        _result = 'Moderate financial risk';
+      } else {
+        _result = 'Low financial risk';
+      }
+    } else {
+      _result = 'Please enter correct data';
+    }
+
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Financial risk calculator'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: _incomeController,
+              decoration: InputDecoration(labelText: 'Monthly income'),
+              keyboardType: TextInputType.number,
+            ),
+            TextField(
+              controller: _expensesController,
+              decoration: InputDecoration(labelText: 'Monthly expense'),
+              keyboardType: TextInputType.number,
+            ),
+            TextField(
+              controller: _savingsController,
+              decoration: InputDecoration(labelText: 'Saving'),
+              keyboardType: TextInputType.number,
+            ),
+            TextField(
+              controller: _debtsController,
+              decoration: InputDecoration(labelText: 'Debts'),
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _calculateRisk,
+              child: Text('Assess the risk'),
+            ),
+            SizedBox(height: 20),
+            Text(
+              _result,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
